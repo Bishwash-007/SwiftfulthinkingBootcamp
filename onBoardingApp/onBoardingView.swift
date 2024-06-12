@@ -12,16 +12,26 @@ struct onBoardingView: View {
     @State var onBoardingState: Int = 0
     @State var age : Float = 50
     @State var gender : String = ""
+    @State var transition : AnyTransition = .asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading))
+    
+    @State var alertTitle : String = ""
+    @State var showAltert : Bool = false
+    
+    @AppStorage("name") var currentUsername : String = ""
+    @AppStorage("age") var currentUserAge : Int?
+    @AppStorage("gender") var userGender : String?
+    @AppStorage("signed_in") var currentUserSignedIn : Bool = false
+    
     var body: some View {
         ZStack{
             
             ZStack{
                 switch onBoardingState{
-                case 0 : welcomeScreen
-                case 1 : nameScreen
-                case 2 : ageScreen
-                case 3 : genderScreen
-                default : Text("this is default screen")
+                case 0 : welcomeScreen.transition(transition)
+                case 1 : nameScreen.transition(transition)
+                case 2 : ageScreen.transition(transition)
+                case 3 : genderScreen.transition(transition)
+                default : Text("this is default screen").transition(transition)
                 }
             }
             
@@ -30,6 +40,9 @@ struct onBoardingView: View {
                 buttomButton
             }.padding(30)
         }
+        .alert(isPresented: $showAltert, content: {
+                    return Alert(title: Text(alertTitle))
+        })
     }
 }
 
@@ -168,8 +181,35 @@ extension onBoardingView {
 // MARK: FUNCTIONS
 extension onBoardingView {
     func handleNextButtonPressed() {
+        
+        switch onBoardingState {
+        case 1 :
+            guard name.count >= 3 else {
+                alertTitle = "your name motherfucker"
+                showAltert.toggle()
+                return
+            }
+        default:
+            break
+        }
+        
+        
+        if onBoardingState == 3 {
+            signIn()
+        }
+        else{
+            withAnimation(.spring()) {
+                onBoardingState += 1
+            }
+        }
+    }
+    
+    func signIn(){
+        currentUsername = name
+        currentUserAge = Int(age)
+        userGender = gender
         withAnimation(.spring()) {
-            onBoardingState += 1
+            currentUserSignedIn = true
         }
     }
 }

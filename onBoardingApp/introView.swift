@@ -13,9 +13,9 @@ struct introView: View {
         ZStack{
             // background
             RadialGradient(
-                gradient: Gradient(colors: [Color(.white),Color(.blue)]),
-                center: .topLeading,
-                startRadius: 25,
+                gradient: Gradient(colors : [Color(.systemRed),Color(.systemPink)]),
+                center: .topTrailing,
+                startRadius: 5,
                 endRadius: UIScreen.main.bounds.height)
             .ignoresSafeArea()
             
@@ -24,7 +24,7 @@ struct introView: View {
             }
             else
             {
-                Text("onBoarding view")
+               onBoardingView()
             }
             
         }
